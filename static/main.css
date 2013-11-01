@@ -121,6 +121,12 @@ p {
 	}
 }
 
+@media all and (max-width: 360px) {
+	#useed, #sshash, #sseed, #new-sshash, #new-useed {
+		width: 200px !important;
+	}
+}
+
 @media all and (min-width: 600px) {
 	.button.med {
 		padding: 4px 6px;
@@ -149,7 +155,7 @@ p {
 		display: inline;
 	}
 	#logo-img {
-		width: 122px;
+		width: 116px;
 	}
 }
 @media all and (max-width: 525px) {
@@ -164,6 +170,12 @@ p {
 	#menu-help {
 		display: none !important;
 	}
+}
+
+.hist-descr {
+	display: block;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #num {
@@ -376,11 +388,12 @@ input:focus:invalid {
 }
 #history {
 	width: 100%;
+	table-layout: fixed;
 	border-top: 1px solid orange;
 	border-collapse:collapse;
 }
 #history th, #history td {
-	padding: 6px;
+	padding: 6px 12px;
 }
 #history tr:nth-child(odd) {
 	background: #222;
