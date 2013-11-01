@@ -681,7 +681,7 @@ hive_sendbtc = (success, txid) ->
     if success
         bitcoin.getTransaction(txid, (tx) ->
             amount = tx.amount / bitcoin.BTC_IN_SATOSHI
-            alert("Thanks! #{amount} BTC was just sent to user #{login_data.name}." +
+            alert("Thanks! #{amount} BTC was just sent to user #{login_data.name}. " +
                   "Now you just need to wait for 1 confirmation.")
         )
 
