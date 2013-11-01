@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="Patten is a provably fair game combined with patterns and jackpot. Every bet has 50% chance to win with a low house edge. Deposit Bitcoins and play.">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<link rel="stylesheet" type="text/css" href="static/main.css">
+		<link rel="stylesheet" type="text/css" href="static/animate-custom.css">
+		<script src="static/zepto.min.js"></script>
+		<script src="static/sockjs-0.3.4.min.js"></script>
+		<script src="static/sockjs_reconnect.min.js"></script>
+		<script src="static/d3.v3.min.js"></script>
+		<script src="static/mousetrap.min.js"></script>
+		<script src="static/mousetrap-pause.min.js"></script>
+		<title>patten: win more by finding patterns while betting</title>
+	</head>
+	<body>
+		<div id="menu">
+			<div id="menu-content">
+				<span id="menu-logo">&nbsp;<img src="static/patten.png" id="logo-img" alt="patten"></span>
+				<span id="menu-buttons">
+					<div id="menu-balance" style="display: inline-block">
+						<div id="balance-control">
+							<a href="#" class="button green med" title="Shortcut: d" id="show-deposit"><span id="long-dp">Deposit</span><span id="short-dp" style="display:none">Dp</span></a>
+							<a href="#" class="button white med" title="Shortcut: f" id="show-withdraw"><span id="long-wd">Withdraw</span><span id="short-wd" style="display:none">Wd</span></a>
+						</div>
+						<div>
+							<span id="balance-text">Free play</span>
+						</div>
+					</div>
+					<span class="spacing">&nbsp;&nbsp;</span>
+					<div id="menu-login" style="display: inline-block">
+						<div id="login-control">
+							<a href="#" id="show-account" class="button white med" style="display: none"><span id="long-acc">Account</span><span id="short-acc" style="display:none">Acc</span></a>
+							<a href="#" id="do-logout" class="button white med" style="display: none">Logout</a>
+							<a href="#" id="show-login" class="button white med">Login</a>
+							<a href="#" id="show-signup" class="button white med">Signup</a>
+						</div>
+						<div id="login-text">No user</div>
+					</div>
+					&nbsp;&nbsp;
+					<div id="menu-help" style="display: inline-block">
+						<div id="help-control">
+							<a href="#" id="show-help" class="button white med">Help</a>
+						</div>
+						<div id="help-text">Huh ?</div>
+					</div>
+					<span class="spacing">&nbsp;</span>
+				</span>
+			</div>
+		</div>
+
+		<div id="wrapper-menu-item"><div id="menu-item">
+			<div id="signup" style="display: none" class="tab">
+				<h2>Sign up for a new account</h2>
+				<p>Play with Bitcoins and track your game.</p>
+				<form class="user-form">
+					<label class="label-left">Username</label>
+					<input type="text" id="new-user" pattern="[a-zA-Z][a-zA-Z0-9]*" maxlength="32">
+					<br />
+					<label class="label-left">Password</label>
+					<input type="password" id="new-pwd"><br/>
+					<label class="label-left">Confirm</label>
+					<input type="password" id="new-pwd-check">
+					<a href="#" id="send-signup" class="button orange med">Create my user!</a>
+				</form>
+			</div>
+
+			<div id="login" style="display: none" class="tab">
+				<h2>Login</h2>
+				<form class="user-form">
+					<label class="label-left">Username</label>
+					<input type="text" id="user" pattern="[a-zA-Z0-9]+" maxlength="32">
+					<br />
+					<label class="label-left">Password</label>
+					<input type="password" id="pwd">
+					<a href="#" id="send-login" class="button orange med">Log me in</a>
+				</form>
+				<br/>
+				<p>Forgot your login ? Contact <b>patten@ggdice.com</b></p>
+			</div>
+
+			<div id="deposit-nologin" style="display: none" class="tab">
+				<h2>Deposit / Withdraw</h2>
+				<p>Login to get a Bitcoin address to where you can send
+				funds to play. Deposits are accepted after 1 confirmation, and you are free
+				to withdraw your funds at any time.
+				The minimum deposit accepted is 0.00006 BTC,
+				and the minimum you can withdraw is 0.00016 BTC.
+				There is a withdraw fee of 0.0001 BTC, which is deducted
+				from the amount being withdrawn.</p>
+			</div>
+
+			<div id="deposit" style="display: none" class="tab">
+				<h2>Deposit</h2>
+				<p>To fund your account, send Bitcoins to</p>
+				<form class="user-form">
+					<label class="label-left" id="lbl-addr">Address</label>
+					<input type="text" id="addr" placeholder="address" readonly="true" style="width: 320px">
+					<a href="#" id="send-hive" class="button green med">Send..</a>
+				</form>
+				<br/>
+				<p>After 1 confirmation your balance will be automatically
+				updated and a new deposit address will be displayed. Old
+				addresses can be reused.</p>
+			</div>
+
+			<div id="withdraw" style="display: none" class="tab">
+				<h2>Withdraw</h2>
+				<p>Fill in the form to withdraw your coins</p>
+				<form class="user-form">
+					<label class="label-left">Address</label>
+					<input type="text" id="wd-addr" maxlength="34" style="width: 320px">
+					<br />
+					<label class="label-left">Amount</label>
+					<input type="text" id="wd-amount" pattern="([0-9]+)?((\.|,)([0-9]{1,8})?)?" maxlength="20" style="text-align:right">
+					<a href="#" id="send-coins" class="button orange med">Send my coins</a>
+				</form>
+				
+				<p style="display: none" id="wd-success">
+				Withdraw completed successfully! After fees, <span id="wd-amount"></span>
+				were sent to <span id="wd-toaddr"></span>. Transaction:
+				<span id="wd-txid"></span>
+				</p>
+			</div>
+
+			<div id="account" style="display: none" class="tab">
+				<h2>Account <span id="username"></span> &nbsp;&nbsp;<a href="#" id="hide-seed">Hide</a></h2>
+				<div id="fair-seed">
+					<p>Data for provably fair check:</p>
+					<form class="user-form">
+						<label class="label-left" style="vertical-align: top">Secret's hash</label>
+						<textarea id="sshash" style="width: 300px; height: 3em" readonly="true" type="text"></textarea>
+
+						<br />
+						<label class="label-left">User seed</label>
+						<input type="text" readonly="true" id="useed" maxlength="32" style="width: 300px">
+						<br />
+						<label class="label-left">Next nonce</label>
+						<input type="text" readonly="true" id="nonce">
+						<a href="#" id="reseed" class="button orange med">Reseed</a>
+					</form>
+					<form class="user-form" id="reseeding" style="display: none; border-top: 1px solid white">
+						<label class="label-left" style="vertical-align: top">Previous secret</label>
+						<textarea id="sseed" style="width: 300px; height: 3em" readonly="true" type="text"></textarea>
+						<br/>
+						<label class="label-left" style="vertical-align: top">New secret's hash</label>
+						<textarea id="new-sshash" style="width: 300px; height: 3em" readonly="true" type="text"></textarea>
+						<br/>
+						<label class="label-left" style="vertical-align: top">New user seed</label>
+						<input type="text" id="new-useed" maxlength="32" style="width: 300px">
+						<br/>
+						<a href="#" id="send-useed" class="button orange med">Send my seed</a>
+					</form>
+				</div>
+
+				<h2>Recent history &nbsp;&nbsp;<a href="#" id="hide-history">Hide</a></h2>
+				<table id="history">
+					<thead>
+						<tr>
+							<th style="width: 5em; text-align: center">#</th>
+							<th class="hist-when" style="width: 11em; text-align: left">When</th>
+							<th style="text-align: left">Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+
+
+			<div id="help" style="display: none" class="tab">
+				<h2>Help</h2>
+				<p>Patten is a simple provably fair betting
+				game combined with patterns and jackpot. The only possible
+				outcomes are the integers from 0 to 9, you can bet
+				on the next result being less than 5 or at least 5.
+				The house edge is <span class="edge">1.25%</span> so if you bet 0.01 BTC
+				and win, you get <span class="edge-ex">0.01975</span> BTC. Each time a bet
+				loses, half of the amount used is added to a jackpot.
+				To hit the jackpot you need to hit a certain pattern,
+				and the rarer the pattern more of the jackpot is taken.</p>
+				<p>If you need further assistance, contact <b>patten@ggdice.com</b>.</p>
+
+				<h2>Patterns and Jackpot</h2>
+				<p>A pattern is continuously built on each placed bet, and the current
+				one is shown at the bottom of the game. Each possible outcome (from 0 to 9)
+				has an associated counter, each time such outcome appears the respective
+				counter is incremented by one. If any counter goes above 10, the pattern
+				overflows and every counter is reset to 0. At any time, you can click
+				at any counter to reset it to zero. Any valid pattern has all
+				its counters greater than zero.</p>
+
+				<p>There are two kinds of patterns recognized for hitting the
+				jackpot: stairs and uniform distributions. The latter refers
+				to patterns where all the counters are 1s, 2s, ..., or 10s.
+				A pattern of uniform 1s grants 10% of the jackpot, uniform 2s
+				grants 20% and so on.
+				The stairs accepted are: 2-steps repeated 5 times, 3-3-4-steps in
+				any order, 5-steps repeated twice, and a single stair with 10 steps also known as
+				the <b>patten</b> stair. For example, <code>1 2 1 2 1 2 1 2</code>
+				is a stair pattern of 2-steps repeated 5 times. Any stair pattern
+				must contain all the stairs in the same direction, i.e. increasing
+				or decreasing.</p>
+
+				<p>Hitting the 2-steps stairs grants 0.1% of the jackpot.
+				The 3-3-4-steps stairs grants 1% of the jackpot,
+				5-steps stairs grants 10% of the jackpot, and the <b>patten</b>
+				stair gets you 100%.</p>
+
+				<p>In case a pattern is hit, the actual amount of Bitcoins received
+				from the jackpot is based on the percentage granted by the pattern
+				together with the amount sum of the last 10 bets
+				&times; 10, capped to a maximum sum of 1. If your last
+				10 bets were done with 0.005 Bitcoins, hitting a pattern would give you
+				0.5 &times; the percentage granted by the pattern hit.</p>
+
+				<h2>Provably Fair</h2>
+				<p>Each account has its own secret seed, user seed and an incrementing nonce.
+				You are free to request a new secret seed at any point,
+				which will both reveal the current secret seed and present the
+				SHA3-256 of the new secret seed that will be used for the next bets.
+				After that you will pick your user seed, and the nonce will be
+				reseted. On each bet, the message "secret_seed:nonce:user_seed"
+				goes through the hashing function given by SHA3-256, and the
+				last integer digit from the resulting function gives the
+				bet outcome.</p>
+			</div>
+		</div></div>
+
+		<noscript><b>This site requires Javascript to work, please enable it
+		or visit the page with a browser that supports it.</b></noscript>
+
+		<div id="wrapper-num">
+			<div id="connecting">
+				Connecting...
+			</div>
+			<div id="top-status" style="display:none">
+				<!--Jackpot: <span id="jackpot">1.0000</span>-->
+				Balance: <span id="balance">-</span>
+			</div>
+			<div id="inner-num">
+				<noscript>Last result:</noscript>
+				<span id="num" title="A number from 0 to 9">?</span>
+				<div id="profit"></div>
+			</div>
+		</div>
+		<div id="give">
+			<div>
+				<p><span id="i-bet-txt">I bet</span></p>
+			</div>
+			<div id="betcontrol">
+				<div id="control">
+					<a href="#" id="doubleit" class="button tiny white" title="Shortcut: x">2x</a>
+					<a href="#" id="halfit" class="button tiny white" title="Shortcut: c">/2</a>
+					<a href="#" id="maxit" class="button tiny white" title="Shortcut: m">Max</a>
+				</div>
+				<input type="text" value="0.01" id="bet" maxlength="20" pattern="([0-9]+)?((\.|,)([0-9]{1,8})?)?">
+			</div>
+			<img src="static/bitcoin.png" alt="BTC" title="BTC" style="padding-bottom: 4px">
+			<span id="longdescr">that my number will be..</span>
+			<span id="shortdescr">on..</span>
+			<br/>
+			<a href="#" class="button orange" id="low" title="Shortcut: a">Less than 5</a>
+			<a href="#" class="button orange" id="high" title="Shortcut: b">At least 5</a>
+		</div>
+
+		<div id="plot">
+			<div id="pattern-msg">Pattern hit: <span id="pattern"></span>
+				<div id="pattern-action">
+					<a href="#" class="button tiny green" id="pattern-collect" title="Shortcut: t">Collect</a>
+					<a href="#" class="button tiny white" id="pattern-continue" title="Shortcut: k">Keep it</a>
+				</div>
+			</div>
+		</div>
+
+		<div id="bottom-status" style="display:none">
+			Jackpot: <span id="jackpot">1.0000</span>
+		</div>
+
+		<div id="show-alert"></div>
+
+		<script src="static/patten.js"></script>
+	</body>
+</html>
