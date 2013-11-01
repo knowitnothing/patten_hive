@@ -500,7 +500,7 @@ handle_withdraw = (data) ->
     if data.error?
         show_alert(data.error)
         return
-    $('#wd-amount').text(data.amount)
+    $('#wd-samount').text(data.amount)
     $('#wd-toaddr').text(data.toaddr)
     $('#wd-txid').text(data.txid)
     $('#wd-success').show()
@@ -631,7 +631,7 @@ handle_logout = ->
         clearTimeout(stream.wd_success_timeout)
         stream.wd_success_timeout = null
     $('#wd-success').hide()
-    $('#wd-amount').text('')
+    $('#wd-samount').text('')
     $('#wd-toaddr').text('')
     $('#wd-txid').text('')
     $('#send-coins').addClass('orange')
