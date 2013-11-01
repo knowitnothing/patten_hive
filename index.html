@@ -19,7 +19,7 @@
 		<div id="menu">
 			<div id="menu-content">
 				<span id="menu-logo">&nbsp;<img src="static/patten.png" id="logo-img" alt="patten"></span>
-				<span id="menu-buttons">
+				<div id="menu-buttons">
 					<div id="menu-balance" style="display: inline-block">
 						<div id="balance-control">
 							<a href="#" class="button green med" title="Shortcut: d" id="show-deposit"><span id="long-dp">Deposit</span><span id="short-dp" style="display:none">Dp</span></a>
@@ -47,7 +47,7 @@
 						<div id="help-text">Huh ?</div>
 					</div>
 					<span class="spacing">&nbsp;</span>
-				</span>
+				</div>
 			</div>
 		</div>
 
@@ -97,7 +97,7 @@
 				<p>To fund your account, send Bitcoins to</p>
 				<form class="user-form">
 					<label class="label-left" id="lbl-addr">Address</label>
-					<input type="text" id="addr" placeholder="address" readonly="true" style="width: 320px">
+					<input type="text" id="addr" placeholder="address" style="width: 320px" readonly>
 					<a href="#" id="send-hive" class="button green med">Send..</a>
 				</form>
 				<br/>
@@ -119,6 +119,7 @@
 				</form>
 				
 				<p style="display: none" id="wd-success">
+				<br/>
 				Withdraw completed successfully! After fees, <span id="wd-samount"></span>
 				were sent to <span id="wd-toaddr"></span>. <br/>Transaction:
 				<span id="wd-txid"></span>
@@ -131,22 +132,22 @@
 					<p>Data for provably fair check:</p>
 					<form class="user-form">
 						<label class="label-left" style="vertical-align: top">Secret's hash</label>
-						<textarea id="sshash" style="width: 300px; height: 3em" readonly="true" type="text"></textarea>
+						<textarea id="sshash" style="width: 300px; height: 3em" readonly></textarea>
 
 						<br />
 						<label class="label-left">User seed</label>
-						<input type="text" readonly="true" id="useed" maxlength="32" style="width: 300px">
+						<input type="text" id="useed" maxlength="32" style="width: 300px" readonly>
 						<br />
 						<label class="label-left">Next nonce</label>
-						<input type="text" readonly="true" id="nonce">
+						<input type="text" id="nonce" readonly>
 						<a href="#" id="reseed" class="button orange med">Reseed</a>
 					</form>
 					<form class="user-form" id="reseeding" style="display: none; border-top: 1px solid white">
 						<label class="label-left" style="vertical-align: top">Previous secret</label>
-						<textarea id="sseed" style="width: 300px; height: 3em" readonly="true" type="text"></textarea>
+						<textarea id="sseed" style="width: 300px; height: 3em" readonly></textarea>
 						<br/>
 						<label class="label-left" style="vertical-align: top">New secret's hash</label>
-						<textarea id="new-sshash" style="width: 300px; height: 3em" readonly="true" type="text"></textarea>
+						<textarea id="new-sshash" style="width: 300px; height: 3em" readonly></textarea>
 						<br/>
 						<label class="label-left" style="vertical-align: top">New user seed</label>
 						<input type="text" id="new-useed" maxlength="32" style="width: 300px">
