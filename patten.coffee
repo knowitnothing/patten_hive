@@ -458,6 +458,7 @@ handle_open = (data) ->
     $('#jackpot').text(data.jackpot)
     $('.edge').text("#{data.edge}%")
     $('.edge-ex').text(data.edge_example)
+    $('#jpincr').text(data.jp_incr)
 
 $('#new-useed').click( ->
     this.focus()
