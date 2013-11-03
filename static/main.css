@@ -157,6 +157,13 @@ p {
 	#logo-img {
 		width: 116px;
 	}
+	#stats {
+		max-width: 350px;
+		font-size: 1.25em !important;
+	}
+	#stats td { padding: 1px !important; }
+	#stats tr.minor { font-size: 0.65em !important; }
+	.minor-text { font-size: 0.65em !important; }
 }
 @media all and (max-width: 525px) {
 	#menu-logo {
@@ -169,6 +176,28 @@ p {
 @media all and (max-width: 400px) {
 	#menu-help {
 		display: none !important;
+	}
+	/* Change the stats table. */
+	#stats {
+		max-width: 200px;
+	}
+	#stats td {
+		display: block;
+	}
+	.vertical {
+		-webkit-transform: rotate(0deg) !important;
+		-moz-transform: rotate(0deg) !important;
+		-ms-transform: rotate(0deg) !important;
+		-o-transform: rotate(0deg) !important;
+		transform: rotate(0deg) !important;
+		filter: "progid:DXImageTransform.Microsoft.BasicImage(enabled=false)" !important;
+	}
+	#stats, #stats tr.minor, .minor-text {
+		font-size: 1em !important;
+	}
+	#nbet-text, #nwin-text, #npattern-text {
+		display: inline;
+		padding-left: 12px;
 	}
 }
 
