@@ -22,8 +22,8 @@
 				<div id="menu-buttons">
 					<div id="menu-balance" style="display: inline-block">
 						<div id="balance-control">
-							<a href="#" class="button green med" title="Shortcut: d" id="show-deposit"><span id="long-dp">Deposit</span><span id="short-dp" style="display:none">Dp</span></a>
-							<a href="#" class="button white med" title="Shortcut: f" id="show-withdraw"><span id="long-wd">Withdraw</span><span id="short-wd" style="display:none">Wd</span></a>
+							<a href="#" class="button green med" id="show-deposit"><span id="long-dp">Deposit</span><span id="short-dp" style="display:none">Dp</span></a>
+							<a href="#" class="button white med" id="show-withdraw"><span id="long-wd">Withdraw</span><span id="short-wd" style="display:none">Wd</span></a>
 						</div>
 						<div>
 							<span id="balance-text">Free play</span>
@@ -63,7 +63,7 @@
 					<input type="password" id="new-pwd"><br/>
 					<label class="label-left">Confirm</label>
 					<input type="password" id="new-pwd-check">
-					<a href="#" id="send-signup" class="button orange med">Create my user!</a>
+					<a href="#" id="send-signup" class="action button orange med">Create my user!</a>
 				</form>
 			</div>
 
@@ -75,7 +75,7 @@
 					<br />
 					<label class="label-left">Password</label>
 					<input type="password" id="pwd">
-					<a href="#" id="send-login" class="button orange med">Log me in</a>
+					<a href="#" id="send-login" class="action button orange med">Log me in</a>
 				</form>
 				<br/>
 				<p style="text-align: left">Forgot your login ? Contact <b>patten@ggdice.com</b></p>
@@ -98,7 +98,7 @@
 				<form class="user-form">
 					<label class="label-left" id="lbl-addr">Address</label>
 					<input type="text" id="addr" placeholder="address" style="width: 320px" readonly>
-					<a href="#" id="send-hive" class="button green med">Send..</a>
+					<a href="#" id="send-hive" class="action button green med">Send..</a>
 				</form>
 				<br/>
 				<p>After 1 confirmation your balance will be automatically
@@ -115,7 +115,7 @@
 					<br />
 					<label class="label-left">Amount</label>
 					<input type="text" id="wd-amount" pattern="([0-9]+)?((\.|,)([0-9]{1,8})?)?" maxlength="20" style="text-align:right">
-					<a href="#" id="send-coins" class="button orange med">Send my coins</a>
+					<a href="#" id="send-coins" class="action button orange med">Send my coins</a>
 				</form>
 				
 				<p style="display: none" id="wd-success">
@@ -127,37 +127,76 @@
 			</div>
 
 			<div id="account" style="display: none" class="tab">
-				<h2>Account <span id="username"></span> &nbsp;&nbsp;<a href="#" id="hide-seed">Hide</a></h2>
-				<div id="fair-seed">
-					<p>Data for provably fair check:</p>
-					<form class="user-form">
-						<label class="label-left" style="vertical-align: top">Secret's hash</label>
-						<textarea id="sshash" style="width: 300px; height: 3em" readonly></textarea>
+				<div class="tab-item">
+					<h2>Account <span id="username"></span> &nbsp;&nbsp;<a href="#" id="hide-seed">Hide</a></h2>
+					<div id="fair-seed">
+						<p>Data for provably fair check:</p>
+						<form class="user-form">
+							<label class="label-left" style="vertical-align: top">Secret's hash</label>
+							<textarea id="sshash" style="width: 300px; height: 3em" readonly></textarea>
 
-						<br />
-						<label class="label-left">User seed</label>
-						<input type="text" id="useed" maxlength="32" style="width: 300px" readonly>
-						<br />
-						<label class="label-left">Next nonce</label>
-						<input type="text" id="nonce" readonly>
-						<a href="#" id="reseed" class="button orange med">Reseed</a>
-					</form>
-					<form class="user-form" id="reseeding" style="display: none; border-top: 1px solid white">
-						<label class="label-left" style="vertical-align: top">Previous secret</label>
-						<textarea id="sseed" style="width: 300px; height: 3em" readonly></textarea>
-						<br/>
-						<label class="label-left" style="vertical-align: top">New secret's hash</label>
-						<textarea id="new-sshash" style="width: 300px; height: 3em" readonly></textarea>
-						<br/>
-						<label class="label-left" style="vertical-align: top">New user seed</label>
-						<input type="text" id="new-useed" maxlength="32" style="width: 300px">
-						<br/>
-						<a href="#" id="send-useed" class="button orange med">Send my seed</a>
-					</form>
+							<br />
+							<label class="label-left">User seed</label>
+							<input type="text" id="useed" maxlength="32" style="width: 300px" readonly>
+							<br />
+							<label class="label-left">Next nonce</label>
+							<input type="text" id="nonce" readonly>
+							<a href="#" id="reseed" class="action button orange med">Reseed</a>
+						</form>
+						<form class="user-form" id="reseeding" style="display: none; border-top: 1px solid white">
+							<label class="label-left" style="vertical-align: top">Previous secret</label>
+							<textarea id="sseed" style="width: 300px; height: 3em" readonly></textarea>
+							<br/>
+							<label class="label-left" style="vertical-align: top">New secret's hash</label>
+							<textarea id="new-sshash" style="width: 300px; height: 3em" readonly></textarea>
+							<br/>
+							<label class="label-left" style="vertical-align: top">New user seed</label>
+							<input type="text" id="new-useed" maxlength="32" style="width: 300px">
+							<br/>
+							<a href="#" id="send-useed" class="action button orange med">Send my seed</a>
+						</form>
+					</div>
+				</div>
+
+				<div class="tab-item">
+					<h2>Stats &nbsp;&nbsp;<a href="#" id="hide-stats">Hide</a></h2>
+					<table id="stats">
+					    <tbody>
+					        <tr>
+					            <td rowspan="7" class="vertical"><span id="ranking">Loading</span> 
+				                <span class="minor-text">profit ranking</span>
+						   		</td>
+					   		</tr> 
+
+							<tr>
+								<td colspan="3" class="bleft bright btop" id="myprofit">Loading</td>
+					        </tr>
+					        <tr class="minor">
+					            <td colspan="3" class="bleft bright">profit</td>
+					        </tr>
+
+					        <tr>
+					            <td class='bleft btop' id="nbet">Loading</td>
+					            <td class='bleft btop' id="nwin">Loading</td>
+					            <td class='bleft btop bright' id="npattern">Loading</td>
+					        </tr>
+					        <tr class="minor">
+					            <td class='bbottom bleft' id='nbet-text'>bets</td>
+					            <td class='bbottom bleft' id="nwin-text">wins</td>
+					            <td class='bbottom bleft bright' id="npattern-text">patterns</td>
+					        </tr>
+					        <tr style="border-top: 1px solid blue">
+					            <td colspan="3" class="bleft bright" id="wagered">Loading</td>
+							</tr>
+					        <tr class="minor">
+					            <td colspan="3" class="bleft bright bbottom">wagered</td>
+					        </tr>
+					    </tbody>
+					</table>
 				</div>
 
 				<h2>Recent history &nbsp;&nbsp;<a href="#" id="hide-history">Hide</a></h2>
-				<table id="history">
+				<table id="history" class="tshow">
 					<thead>
 						<tr>
 							<th style="text-align: center; width: 50px">#</th>
@@ -177,9 +216,9 @@
 				game combined with patterns and jackpot. The only possible
 				outcomes are the integers from 0 to 9, you can bet
 				on the next result being less than 5 or at least 5.
-				The house edge is <span class="edge">1.25%</span> so if you bet 0.01 BTC
-				and win, you get <span class="edge-ex">0.01975</span> BTC. Each time a bet
-				loses, <span class="jpincr">one third</span> of the amount used is added to a jackpot.
+				The house edge is <span class="edge">1.25%</span> so if you bet 0.045 BTC
+				and win, you get <span class="edge-ex">0.043875</span> BTC in profits. Each time a bet
+				loses, <span id="jpincr">one third</span> of the amount used is added to a jackpot.
 				To hit the jackpot you need to hit a certain pattern,
 				and the rarer the pattern more of the jackpot is taken.</p>
 				<p>If you need further assistance, contact <b>patten@ggdice.com</b>.</p>
