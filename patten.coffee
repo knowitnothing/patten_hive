@@ -15,6 +15,7 @@ stream = {
     hist_n: 10 # Show 10 entries in the recent history
 
     wd_success_timeout: null
+    pending_ranking_update: false
 }
 
 bet = {
@@ -91,6 +92,17 @@ update_hl = (high) ->
     if high?
         elem = if high then '#high' else '#low'
         $(elem).addClass('bold')
+
+numcomma = (num, limit) ->
+    if not num?
+        console.log('bad num', num)
+        return
+    n = num.toString().split('.')
+    n[0] = n[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    if limit? and Number(num) >= limit
+        # Do not show decimal places if num is above this limit.
+        return n[0]
+    return n.join(".")
 
 zeropad = (x, n, s) ->
     if x.length >= n
@@ -200,6 +212,8 @@ handle_result = (data) ->
         hide_alert()
 
     $('#nonce').val(data.nonce)
+    # User stats
+    show_userstats(data.stats)
 
     $('#num').removeClass('lose')
     $('#num').removeClass('win')
@@ -350,6 +364,41 @@ pattern_continue = ->
     data = {type: 'pattern-continue'}
     sock_send(data)
 
+show_userstats = (data) ->
+    if not data?
+        for item in ['#myprofit', '#nbet', '#nwin', '#npattern', '#wagered']
+            $(item).text('Error')
+        return
+    console.log(data)
+    show_ranking(data.ranking)
+    $('#myprofit').text(numcomma(data.profit))
+    $('#wagered').text(numcomma(data.wagered))
+    for item in [['#nbet', data.nbet], ['#nwin', data.nwin], ['#npattern', data.npatt]]
+        $(item[0]).text(numcomma(item[1]))
+        text = item[0].substr(2)
+        if Number(item[1]) != 1
+            $("#{item[0]}-text").text("#{text}s")
+        else
+            $("#{item[0]}-text").text("#{text}")
+
+show_ranking = (ranking) ->
+    if Number(ranking) > 0
+        $('#ranking').text("##{numcomma(ranking)}")
+    else
+        $('#ranking').text("Unranked")
+
+
+handle_ranking = (data) ->
+    stream.pending_ranking_update = false
+    if data.error?
+        show_alert(data.error)
+        return
+    show_ranking(data.ranking)
+
+ranking_update = ->
+    if stream.pending_ranking_update
+        console.log('update ranking')
+        sock_send({type: 'ranking'})
 
 setup_plot = ->
     plot.xscale = d3.scale.ordinal().domain(d3.range(plot.dataset.length))
@@ -558,6 +607,9 @@ handle_login = (data) ->
         $('#balance').text(login_data.balance)
         $('#username').text("#{login_data.name} (##{data.uid})")
         $('#addr').val(login_data.address)
+        # User stats
+        stream.pending_ranking_update = false
+        show_userstats(data.stats)
         # Betting data
         $('#nonce').val(data.nonce)
         $('#useed').val(data.useed)
@@ -730,11 +782,14 @@ main = ->
             when 'pattern-collect'
                 handle_pattern(false, data.amount)
                 $('#balance').text(data.balance)
+                $('#myprofit').text(numcomma(data.profit))
             when 'pattern-continue' then handle_pattern(true)
+            when 'ranking' then handle_ranking(data)
             when 'bet-update'
                 $('#jackpot').text(data.jackpot)
                 if data.maxbet?
                     bet.maxbet = data.maxbet
+                    stream.pending_ranking_update = true
             when 'balance' then $('#balance').text(data.balance)
             when 'address'
                 login_data.address = data.address
@@ -760,6 +815,8 @@ main = ->
     stream.sock.connect()
 
     update_hl(null)
+
+    setInterval(ranking_update, 10 * 1000)
 
     $('#pattern').text('None')
     $('#pattern-action').hide()
@@ -873,6 +930,10 @@ main = ->
         $('#history').toggle()
         $('#hide-history').text(if $('#history').css('display') != 'none' then 'Hide' else 'Show')
     )
+    $('#hide-stats').click( (event) ->
+        $('#stats').toggle()
+        $('#hide-stats').text(if $('#stats').css('display') != 'none' then 'Hide' else 'Show')
+    )
 
     $('#reseed').click( (event) ->
         event.preventDefault()
@@ -913,6 +974,9 @@ main = ->
     bind_submit_form(['#user', '#pwd'], '#send-login')
     bind_submit_form(['#new-user', '#new-pwd', '#new-pwd-check'], '#send-signup')
     bind_submit_form(['#wd-amount'], '#send-coins')
+    bind_submit_form(['#secemail'], '#send-email')
+    bind_submit_form(['#wd-lock'], '#send-wdlock')
+    bind_submit_form(['#new-useed'], '#send-useed')
 
     if text_anim.num
         unk_highlight = ->
