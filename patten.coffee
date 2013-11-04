@@ -63,7 +63,7 @@ double_bet = (event) ->
     event.preventDefault()
     if valid_bet()?
         bet.currbet *= 2
-        if bet.currbet > bet.maxbet
+        if Number(bet.currbet) > Number(bet.maxbet)
             bet.currbet = bet.maxbet
         else if !amount_re.test(bet.currbet)
             bet.currbet = bet.currbet.toFixed(8)
@@ -74,8 +74,10 @@ half_bet = (event) ->
     event.preventDefault()
     if valid_bet()?
         bet.currbet /= 2
-        if bet.currbet < bet.minbet or !amount_re.test(bet.currbet)
+        if Number(bet.currbet) < Number(bet.minbet)
             bet.currbet = bet.minbet
+        else if !amount_re.test(bet.currbet)
+            bet.currbet = bet.currbet.toFixed(8)
         $('#bet').val(bet.currbet)
 
 max_bet = (event) ->
@@ -369,7 +371,6 @@ show_userstats = (data) ->
         for item in ['#myprofit', '#nbet', '#nwin', '#npattern', '#wagered']
             $(item).text('Error')
         return
-    console.log(data)
     show_ranking(data.ranking)
     $('#myprofit').text(numcomma(data.profit))
     $('#wagered').text(numcomma(data.wagered))
@@ -397,7 +398,6 @@ handle_ranking = (data) ->
 
 ranking_update = ->
     if stream.pending_ranking_update
-        console.log('update ranking')
         sock_send({type: 'ranking'})
 
 setup_plot = ->
@@ -508,6 +508,8 @@ handle_open = (data) ->
     $('.edge').text("#{data.edge}%")
     $('.edge-ex').text(data.edge_example)
     $('#jpincr').text(data.jp_incr)
+    bet.minbet = data.min_bet
+    bet.maxbet = data.max_bet
 
 $('#new-useed').click( ->
     this.focus()
@@ -614,9 +616,6 @@ handle_login = (data) ->
         $('#nonce').val(data.nonce)
         $('#useed').val(data.useed)
         $('#sshash').val(data.sshash)
-
-        bet.minbet = data.min_bet
-        bet.maxbet = data.max_bet
 
         # Recent history
         table = $('#history tbody')
@@ -787,9 +786,14 @@ main = ->
             when 'ranking' then handle_ranking(data)
             when 'bet-update'
                 $('#jackpot').text(data.jackpot)
-                if data.maxbet?
-                    bet.maxbet = data.maxbet
-                    stream.pending_ranking_update = true
+                if data.max_bet?
+                    if $('#bet').val() == bet.maxbet
+                        # The earlier bet was a maxbet, so it is nice
+                        # to update it to reflect the update.
+                        $('#bet').val(data.max_bet)
+                    bet.maxbet = data.max_bet
+                    if login_data.name?
+                        stream.pending_ranking_update = true
             when 'balance' then $('#balance').text(data.balance)
             when 'address'
                 login_data.address = data.address
