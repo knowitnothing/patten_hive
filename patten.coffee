@@ -699,7 +699,8 @@ handle_history = (hist, limited) ->
     for item in hist
         entry = $.parseJSON(item)
         whend = "<td class='hist-when'>#{datestr(entry.when)}</td>"
-        descr = "<td class='hist-descr'>#{entry.descr}</td>"
+        descr_text = $('<div/>').text(entry.descr).html()
+        descr = "<td class='hist-descr'>#{descr_text}</td>"
         data += "<tr><td style='text-align: center'>#{entry.id}</td>#{whend}#{descr}</tr>"
     $('#history tbody').append(data)
 
