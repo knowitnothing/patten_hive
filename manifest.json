@@ -3,9 +3,9 @@
 	"version": "0.3",
 	"name": "Patten",
 	"author": "knowitnothing",
-	"contact": "a@ggdice",
+	"contact": "patten@ggdice.com",
 	"description": "Simple and fast betting at low house edge. Hit patterns to win big!",
 	"icon": "patten_icon.png",
-	"homepage": "ggdice.com",
+	"homepage": "gl.dice.gg",
 	"tor": "allow"
 }
